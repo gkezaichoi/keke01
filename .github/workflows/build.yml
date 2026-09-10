@@ -18,8 +18,9 @@ jobs:
       - name: Setup Theos
         uses: Randomblock1/theos-action@v1
 
-      - name: Build Tweak
+      - name: Fix Makefile and Build
         run: |
+          sed -i 's/^TARGET =.*/TARGET = iphone:clang:latest:14.0/' Makefile
           make FINALPACKAGE=1
           mkdir -p output
           find .theos/obj -name "*.dylib" -exec cp {} output/ \;
@@ -29,3 +30,4 @@ jobs:
         with:
           name: BonfireCheat-dylib
           path: output/
+
