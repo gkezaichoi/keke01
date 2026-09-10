@@ -18,8 +18,11 @@ jobs:
       - name: Setup Theos
         uses: Randomblock1/theos-action@v1
 
-      - name: Fix Makefile and Build
+      - name: Fix Code and Build
         run: |
+          # Sửa trực tiếp lỗi ép kiểu void pointer sang function pointer trong file Tweak.xm
+          sed -i 's/\*(void\*\*)m/(void (\*)(Il2CppObject \*, void \*))\*(void\*\*)m/g' Tweak.xm
+
           cat << 'EOF' > Makefile
           TARGET := iphone:clang:latest:14.0
           ARCHS = arm64
@@ -30,10 +33,12 @@ jobs:
           BonfireCheat_FILES = Tweak.xm
           BonfireCheat_FRAMEWORKS = UIKit Foundation
           BonfireCheat_LIBRARIES = substrate
-          BonfireCheat_CFLAGS = -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=int-conversion -Wno-error
+          BonfireCheat_CCFLAGS = -Wno-error -w
+          BonfireCheat_CXXFLAGS = -Wno-error -w
 
           include $(THEOS)/makefiles/tweak.mk
           EOF
+
           make FINALPACKAGE=1
           mkdir -p output
           find .theos/obj -name "*.dylib" -exec cp {} output/ \;
