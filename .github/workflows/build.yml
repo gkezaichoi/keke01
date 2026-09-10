@@ -20,7 +20,19 @@ jobs:
 
       - name: Fix Makefile and Build
         run: |
-          sed -i 's/^TARGET =.*/TARGET = iphone:clang:latest:14.0/' Makefile
+          cat << 'EOF' > Makefile
+          TARGET := iphone:clang:latest:14.0
+          ARCHS = arm64
+
+          include $(THEOS)/makefiles/common.mk
+
+          TWEAK_NAME = BonfireCheat
+          BonfireCheat_FILES = Tweak.xm
+          BonfireCheat_FRAMEWORKS = UIKit Foundation
+          BonfireCheat_LIBRARIES = substrate
+
+          include $(THEOS)/makefiles/tweak.mk
+          EOF
           make FINALPACKAGE=1
           mkdir -p output
           find .theos/obj -name "*.dylib" -exec cp {} output/ \;
@@ -30,4 +42,3 @@ jobs:
         with:
           name: BonfireCheat-dylib
           path: output/
-
