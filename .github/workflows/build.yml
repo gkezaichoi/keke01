@@ -30,6 +30,7 @@ jobs:
           BonfireCheat_FILES = Tweak.xm
           BonfireCheat_FRAMEWORKS = UIKit Foundation
           BonfireCheat_LIBRARIES = substrate
+          BonfireCheat_CFLAGS = -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=int-conversion -Wno-error
 
           include $(THEOS)/makefiles/tweak.mk
           EOF
